@@ -1,5 +1,4 @@
 VERSION 5.00
-Object = "{67397AA1-7FB1-11D0-B148-00A0C922E820}#6.0#0"; "MSADODC.OCX"
 Object = "{0ECD9B60-23AA-11D0-B351-00A0C9055D8E}#6.0#0"; "MSHFLXGD.OCX"
 Begin VB.Form frmPrincipal 
    AutoRedraw      =   -1  'True
@@ -14,73 +13,6 @@ Begin VB.Form frmPrincipal
    ScaleHeight     =   5115
    ScaleWidth      =   7050
    StartUpPosition =   2  'CenterScreen
-   Begin MSHierarchicalFlexGridLib.MSHFlexGrid grdDividas 
-      Bindings        =   "frmPrincipal.frx":0000
-      Height          =   3015
-      Left            =   360
-      TabIndex        =   3
-      Top             =   1800
-      Width           =   6375
-      _ExtentX        =   11245
-      _ExtentY        =   5318
-      _Version        =   393216
-      FixedCols       =   0
-      RowHeightMin    =   100
-      AllowBigSelection=   0   'False
-      FillStyle       =   1
-      ScrollBars      =   2
-      SelectionMode   =   1
-      AllowUserResizing=   1
-      _NumberOfBands  =   1
-      _Band(0).Cols   =   2
-   End
-   Begin MSAdodcLib.Adodc adoDividas 
-      Height          =   495
-      Left            =   5400
-      Top             =   4200
-      Visible         =   0   'False
-      Width           =   1200
-      _ExtentX        =   2117
-      _ExtentY        =   873
-      ConnectMode     =   0
-      CursorLocation  =   3
-      IsolationLevel  =   -1
-      ConnectionTimeout=   15
-      CommandTimeout  =   30
-      CursorType      =   3
-      LockType        =   3
-      CommandType     =   1
-      CursorOptions   =   0
-      CacheSize       =   50
-      MaxRecords      =   0
-      BOFAction       =   0
-      EOFAction       =   0
-      ConnectStringType=   1
-      Appearance      =   1
-      BackColor       =   -2147483643
-      ForeColor       =   -2147483640
-      Orientation     =   0
-      Enabled         =   0
-      Connect         =   ""
-      OLEDBString     =   ""
-      OLEDBFile       =   ""
-      DataSourceName  =   ""
-      OtherAttributes =   ""
-      UserName        =   "postgres"
-      Password        =   "admin"
-      RecordSource    =   ""
-      Caption         =   "Adodc1"
-      BeginProperty Font {0BE35203-8F91-11CE-9DE3-00AA004BB851} 
-         Name            =   "MS Sans Serif"
-         Size            =   8.25
-         Charset         =   0
-         Weight          =   400
-         Underline       =   0   'False
-         Italic          =   0   'False
-         Strikethrough   =   0   'False
-      EndProperty
-      _Version        =   393216
-   End
    Begin VB.CommandButton cmdCadastrar 
       Caption         =   "Lançar Dívidas"
       BeginProperty Font 
@@ -140,6 +72,25 @@ Begin VB.Form frmPrincipal
       TabIndex        =   1
       Top             =   1080
       Width           =   1335
+   End
+   Begin MSHierarchicalFlexGridLib.MSHFlexGrid grdDividas 
+      Height          =   3015
+      Left            =   360
+      TabIndex        =   3
+      Top             =   1800
+      Width           =   6375
+      _ExtentX        =   11245
+      _ExtentY        =   5318
+      _Version        =   393216
+      FixedCols       =   0
+      RowHeightMin    =   100
+      AllowBigSelection=   0   'False
+      FillStyle       =   1
+      ScrollBars      =   2
+      SelectionMode   =   1
+      AllowUserResizing=   1
+      _NumberOfBands  =   1
+      _Band(0).Cols   =   2
    End
    Begin VB.Label Label2 
       AutoSize        =   -1  'True
@@ -222,6 +173,7 @@ Sub FazerRequisicaoGetDividas()
 
     Set objHTTP = CreateObject("MSXML2.XMLHTTP.6.0")
     objHTTP.Open "GET", strURL, False
+    objHTTP.setRequestHeader "Content-Type", "application/json"
     objHTTP.send
 
     If objHTTP.Status = 200 Then
