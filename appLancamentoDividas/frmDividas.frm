@@ -39,7 +39,6 @@ Begin VB.Form frmDividas
       Width           =   1935
    End
    Begin VB.TextBox txtValor 
-      Alignment       =   1  'Right Justify
       BeginProperty DataFormat 
          Type            =   1
          Format          =   "00000000000"
@@ -174,21 +173,21 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub cmdCadastrar_Click()
 
-    Dim strCPF As String
+    Dim strCpf As String
     Dim dblValor As Double
     Dim strVencimento As String
         
     If Not ValidaForm() Then Exit Sub
         
-    strCPF = txtCPF.Text
+    strCpf = txtCPF.Text
     dblValor = CDbl(txtValor.Text)
     strVencimento = txtVencimento.Text
     
-    Call InserirDivida(strCPF, dblValor, CDate(strVencimento))
+    Call InserirDivida(strCpf, dblValor, CDate(strVencimento))
     
 End Sub
 
-Sub InserirDivida(cpf As String, valor As Double, DataVencimento As Date)
+Sub InserirDivida(Cpf As String, valor As Double, DataVencimento As Date)
 
     Dim cnn As ADODB.Connection
     Dim cmd As ADODB.Command
@@ -205,7 +204,7 @@ Sub InserirDivida(cpf As String, valor As Double, DataVencimento As Date)
 
     cmd.CommandText = "CALL public.prcdividainsert(?,?,?)"
 
-    cmd.Parameters.Append cmd.CreateParameter("cpf", adVarChar, adParamInput, 11, cpf)
+    cmd.Parameters.Append cmd.CreateParameter("cpf", adVarChar, adParamInput, 11, Cpf)
     cmd.Parameters.Append cmd.CreateParameter("valor", adDouble, adParamInput, , valor)
     cmd.Parameters.Append cmd.CreateParameter("vencimento", adDBDate, adParamInput, , DataVencimento)
     
@@ -230,10 +229,8 @@ LimpaObjetos:
     Exit Sub
 
 TrataErro:
-    ' Trata possíveis erros
     MsgBox "Ocorreu um erro ao inserir a dívida: " & Err.Description, vbCritical
     GoTo LimpaObjetos
-
 End Sub
 
 Public Function ValidaForm() As Boolean
@@ -258,8 +255,12 @@ Public Function ValidaForm() As Boolean
     End If
 End Function
 
-Private Sub txtValor_KeyPress(KeyAscii As Integer)
+Private Sub txtCPF_KeyPress(KeyAscii As Integer)
     KeyAscii = ValidaCampoNumerico(KeyAscii)
+End Sub
+
+Private Sub txtValor_KeyPress(KeyAscii As Integer)
+    KeyAscii = ValidaCampoMoeda(txtValor, KeyAscii)
 End Sub
 
 Private Sub txtValor_LostFocus()
