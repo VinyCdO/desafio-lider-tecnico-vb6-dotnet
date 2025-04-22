@@ -1,0 +1,7 @@
+@apiNegociacaoDividas_HostAddress = http://localhost:5255          
+
+GET {{apiNegociacaoDividas_HostAddress}}/Negociacoes?id_divida=11
+Accept: application/json
+
+
+###

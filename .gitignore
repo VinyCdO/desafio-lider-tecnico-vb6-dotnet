@@ -1,1 +1,6 @@
 appLancamentoDividas/mdlConstants.bas
+apiNegociacaoDividas/*.json
+
+apiNegociacaoDividas/bin/
+apiNegociacaoDividas/obj/
+apiNegociacaoDividas/.vs/
