@@ -1,6 +1,6 @@
 frmDividas = 104, 104, 2065, 730, , 10, 258, 703, 884, C
-frmPrincipal = 19, -3, 909, 951, , 705, 258, 1346, 891, C
+frmPrincipal = 32, 282, 922, 1236, , 705, 258, 1346, 891, C
 mdlGlobais = 78, 78, 832, 945, 
-mdlConstants = 104, 104, 858, 517, Z
+mdlConstants = 104, 104, 858, 517, 
 frmNegociacoes = 911, 13, 2125, 835, , 1347, 259, 2063, 892, C
 clsDividas = 73, 128, 1912, 770, 

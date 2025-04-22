@@ -327,7 +327,6 @@ Private Sub cmdSimular_Click()
         Exit Sub
     End If
     
-    grdNegociacoes.Clear
     SimularNegociacao
 End Sub
 
