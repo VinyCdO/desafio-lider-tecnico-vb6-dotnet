@@ -50,7 +50,7 @@ Begin VB.Form frmDividas
       EndProperty
       Height          =   420
       Left            =   2520
-      MaxLength       =   12
+      MaxLength       =   15
       TabIndex        =   3
       Top             =   1800
       Width           =   1935
@@ -173,90 +173,73 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
 Private Sub cmdCadastrar_Click()
 
-    Dim strCpf As String
+    Dim StrCPF As String
     Dim dblValor As Double
     Dim strVencimento As String
         
     If Not ValidaForm() Then Exit Sub
         
-    strCpf = txtCPF.Text
-    dblValor = CDbl(txtValor.Text)
+    StrCPF = txtCPF.Text
+    dblValor = CDbl(RemoveMascaraValor(txtValor.Text))
     strVencimento = txtVencimento.Text
     
-    Call InserirDivida(strCpf, dblValor, CDate(strVencimento))
+    Call InserirDivida(StrCPF, dblValor, CDate(strVencimento))
     
 End Sub
 
 Sub InserirDivida(Cpf As String, valor As Double, DataVencimento As Date)
-
-    Dim cnn As ADODB.Connection
-    Dim cmd As ADODB.Command
-
-    On Error GoTo TrataErro
-
-    Set cnn = New ADODB.Connection
-    cnn.ConnectionString = CONN_STRING
-    cnn.Open
-
-    Set cmd = New ADODB.Command
-    cmd.ActiveConnection = cnn
-    cmd.CommandType = adCmdText
-
-    cmd.CommandText = "CALL public.prcdividainsert(?,?,?)"
-
-    cmd.Parameters.Append cmd.CreateParameter("cpf", adVarChar, adParamInput, 11, Cpf)
-    cmd.Parameters.Append cmd.CreateParameter("valor", adDouble, adParamInput, , valor)
-    cmd.Parameters.Append cmd.CreateParameter("vencimento", adDBDate, adParamInput, , DataVencimento)
     
-    cmd.Execute
-
-    MsgBox "Dívida inserida com sucesso!", vbInformation
-
-    txtCPF.Text = ""
-    txtValor.Text = ""
-    txtVencimento.Text = ""
+    Dim strMsgErro As String
+    Dim clDividas As New clsDividas
     
-LimpaObjetos:
-    If Not cmd Is Nothing Then
-        Set cmd = Nothing
+    If clDividas.CadastrarDivida(Cpf, valor, DataVencimento, strMsgErro) Then
+        MsgBox "Dívida inserida com sucesso!", vbInformation, "Gestão de Dívidas - Paschoalloto"
+                    
+        txtCPF.Text = ""
+        txtValor.Text = ""
+        txtVencimento.Text = ""
+    Else
+        MsgBox "Ocorreu um erro ao inserir a dívida: " & strMsgErro, vbCritical, "Gestão de Dívidas - Paschoalloto"
     End If
-    If cnn.State = adStateOpen Then
-        cnn.Close
-    End If
-    If Not cnn Is Nothing Then
-        Set cnn = Nothing
-    End If
-    Exit Sub
-
-TrataErro:
-    MsgBox "Ocorreu um erro ao inserir a dívida: " & Err.Description, vbCritical
-    GoTo LimpaObjetos
+    
+    Set clDividas = Nothing
+        
 End Sub
 
 Public Function ValidaForm() As Boolean
     ValidaForm = True
     
     If Not IsNumeric(txtCPF.Text) Or Len(txtCPF.Text) <> 11 Then
-        MsgBox "Informe um CPF válido para prosseguir.", vbExclamation
+        MsgBox "Informe um CPF válido para prosseguir.", vbExclamation, "Gestão de Dívidas - Paschoalloto"
         ValidaForm = False
         Exit Function
     End If
     
     If Not IsNumeric(txtValor.Text) Then
-        MsgBox "Informe um valor de dívida válido para prosseguir.", vbExclamation
+        MsgBox "Informe um valor de dívida válido para prosseguir.", vbExclamation, "Gestão de Dívidas - Paschoalloto"
         ValidaForm = False
         Exit Function
     End If
     
     If Not IsDate(txtVencimento.Text) Then
-        MsgBox "Informe uma data válida para prosseguir.", vbExclamation
+        MsgBox "Informe uma data válida para prosseguir.", vbExclamation, "Gestão de Dívidas - Paschoalloto"
         ValidaForm = False
         Exit Function
     End If
 End Function
 
+Private Sub txtCPF_GotFocus()
+    txtCPF.SelStart = 0
+    txtCPF.SelLength = Len(txtCPF.Text) + 1
+End Sub
+
 Private Sub txtCPF_KeyPress(KeyAscii As Integer)
     KeyAscii = ValidaCampoNumerico(KeyAscii)
+End Sub
+
+Private Sub txtValor_GotFocus()
+    txtValor.SelStart = 0
+    txtValor.SelLength = Len(txtValor.Text) + 1
 End Sub
 
 Private Sub txtValor_KeyPress(KeyAscii As Integer)
@@ -264,5 +247,10 @@ Private Sub txtValor_KeyPress(KeyAscii As Integer)
 End Sub
 
 Private Sub txtValor_LostFocus()
-    txtValor.Text = FormataValor(txtValor.Text)
+    txtValor.Text = FormataValor(txtValor.Text, False)
+End Sub
+
+Private Sub txtVencimento_GotFocus()
+    txtVencimento.SelStart = 0
+    txtVencimento.SelLength = Len(txtVencimento.Text)
 End Sub

@@ -1,6 +1,38 @@
 Attribute VB_Name = "mdlGlobais"
-Public Function FormataValor(valor As String)
-    FormataValor = Format(valor, "R$ #,##0.00")
+Public gIntIdDivida As Integer
+Public gStrCPF As String
+Public gStrValor As String
+Public gStrDtVencimento As String
+
+Public Function RemoveMascaraValor(valor As String)
+    Dim strValor As String
+    
+    strValor = Replace(valor, "R$ ", "")
+    strValor = Replace(valor, ".", "")
+    
+    RemoveMascaraValor = strValor
+End Function
+
+Public Function FormataValorJSON(valor As String)
+    Dim strValor As String
+    
+    strValor = Replace(valor, "R$ ", "")
+    strValor = Replace(valor, ".", "")
+    strValor = Replace(valor, ",", ".")
+    
+    FormataValorJSON = strValor
+End Function
+
+Public Function FormataValor(valor As String, blnMoeda As Boolean)
+    If blnMoeda Then
+        FormataValor = Format(valor, "R$ #,##0.00")
+    Else
+        FormataValor = Format(valor, "#,##0.00")
+    End If
+End Function
+
+Public Function FormataPorcentagem(valor As String)
+    FormataPorcentagem = Format(valor, "##0.00")
 End Function
 
 Public Function FormataCPF(Cpf As String)
@@ -49,8 +81,8 @@ Public Function ValidaCampoMoeda(txt As TextBox, KeyAscii As Integer)
 End Function
 
 Public Function PreencherCollectionComJSONManual(strRespostaJSON As String) As Collection
-    Dim arrDividas As Collection
-    Dim objDivida As Dictionary
+    Dim arrResponse As Collection
+    Dim objResponde As Dictionary
     Dim i As Long
     Dim startObject As Long
     Dim endObject As Long
@@ -58,7 +90,7 @@ Public Function PreencherCollectionComJSONManual(strRespostaJSON As String) As C
 
     On Error GoTo TrataErro:
 
-    Set arrDividas = New Collection
+    Set arrResponse = New Collection
 
     ' Remover os colchetes '[' e ']' externos
     Dim jsonWithoutBrackets As String
@@ -81,16 +113,16 @@ Public Function PreencherCollectionComJSONManual(strRespostaJSON As String) As C
 
     ' Iterar sobre os objetos JSON
     For i = LBound(arrObjetos) To UBound(arrObjetos)
-        Set objDivida = ParseJsonObject(Trim$(arrObjetos(i)))
-        If Not objDivida Is Nothing Then
-            arrDividas.Add objDivida
+        Set objResponde = ParseJsonObject(Trim$(arrObjetos(i)))
+        If Not objResponde Is Nothing Then
+            arrResponse.Add objResponde
         End If
     Next i
     
-    Set PreencherCollectionComJSONManual = arrDividas
+    Set PreencherCollectionComJSONManual = arrResponse
     
-    Set arrDividas = Nothing
-    Set objDivida = Nothing
+    Set arrResponse = Nothing
+    Set objResponde = Nothing
 
     Exit Function
 

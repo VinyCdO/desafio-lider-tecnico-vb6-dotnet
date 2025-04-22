@@ -4,15 +4,33 @@ Begin VB.Form frmPrincipal
    AutoRedraw      =   -1  'True
    BorderStyle     =   1  'Fixed Single
    Caption         =   "Gestão de Dívidas - Paschoalloto"
-   ClientHeight    =   5115
+   ClientHeight    =   5610
    ClientLeft      =   45
    ClientTop       =   390
    ClientWidth     =   7050
    LinkTopic       =   "Form1"
    MaxButton       =   0   'False
-   ScaleHeight     =   5115
+   ScaleHeight     =   5610
    ScaleWidth      =   7050
    StartUpPosition =   2  'CenterScreen
+   Begin VB.CommandButton cmdNegociacoes 
+      Caption         =   "Acessar Negociações"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   8.25
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   375
+      Left            =   4560
+      TabIndex        =   6
+      ToolTipText     =   "Selecione um registro para acessar a área de Negociações"
+      Top             =   4920
+      Width           =   2175
+   End
    Begin VB.CommandButton cmdCadastrar 
       Caption         =   "Lançar Dívidas"
       BeginProperty Font 
@@ -147,12 +165,26 @@ Private Sub cmdPesquisar_Click()
     Cpf = Trim(txtCPF.Text)
     
     If Cpf = "" Or IsNumeric(Cpf) = False Or Len(Cpf) <> 11 Then
-        MsgBox "Informe CPF válido para realizar a pesquisa.", vbInformation
+        MsgBox "Informe CPF válido para realizar a pesquisa.", vbInformation, "Gestão de Dívidas - Paschoalloto"
         Exit Sub
     End If
     
-    FazerRequisicaoGetDividas
+    GetDividas
             
+End Sub
+
+Private Sub cmdNegociacoes_Click()
+    If grdDividas.TextMatrix(grdDividas.Row, 0) = "" Then
+        MsgBox "Selecione um registro para acessar a área de Negociações.", vbInformation, "Gestão de Dívidas - Paschoalloto"
+        Exit Sub
+    End If
+    
+    gIntIdDivida = grdDividas.TextMatrix(grdDividas.Row, 0)
+    gStrCPF = grdDividas.TextMatrix(grdDividas.Row, 1)
+    gStrValor = grdDividas.TextMatrix(grdDividas.Row, 2)
+    gStrDtVencimento = grdDividas.TextMatrix(grdDividas.Row, 3)
+    
+    frmNegociacoes.Show 1
 End Sub
 
 Private Sub txtCPF_KeyPress(KeyAscii As Integer)
@@ -163,13 +195,13 @@ Private Sub txtCPF_KeyPress(KeyAscii As Integer)
     KeyAscii = ValidaCampoNumerico(KeyAscii)
 End Sub
 
-Sub FazerRequisicaoGetDividas()
+Sub GetDividas()
     Dim objHTTP As Object
     Dim strURL As String
     
     On Error GoTo TrataErro:
     
-    strURL = ENDPOINT_API_DIVIDAS & "?cpf=" & txtCPF.Text
+    strURL = ENDPOINT_API & "/Dividas?cpf=" & txtCPF.Text
 
     Set objHTTP = CreateObject("MSXML2.XMLHTTP.6.0")
     objHTTP.Open "GET", strURL, False
@@ -179,7 +211,7 @@ Sub FazerRequisicaoGetDividas()
     If objHTTP.Status = 200 Then
         PreencherGridComJSON (objHTTP.responseText)
     Else
-        MsgBox "Erro na requisição GET. Status: " & objHTTP.Status & " - " & objHTTP.statusText
+        MsgBox "Erro na comunicação ao realizar pesquisa de Dívidas. Status: " & objHTTP.Status & " - " & objHTTP.statusText, vbCritical, "Gestão de Dívidas - Paschoalloto"
     End If
     
     Set objHTTP = Nothing
@@ -187,7 +219,7 @@ Sub FazerRequisicaoGetDividas()
     Exit Sub
     
 TrataErro:
-    MsgBox "Ocorreu alguma falha ao tentar pesquisar as dívidas para o CPF informado, verifique e tente novamente. Erro: " & Err.Description, vbCritical
+    MsgBox "Não foi localizado nenhuma dívida para o CPF informado.", vbInformation, "Gestão de Dívidas - Paschoalloto"
 End Sub
 
 Sub PreencherGridComJSON(httpResponseJSON As String)
@@ -214,7 +246,7 @@ Sub PreencherGridComJSON(httpResponseJSON As String)
             Set objDivida = arrDividas.Item(i)
             grdDividas.TextMatrix(i, 0) = objDivida("id")
             grdDividas.TextMatrix(i, 1) = FormataCPF(objDivida("cpf"))
-            grdDividas.TextMatrix(i, 2) = FormataValor(objDivida("valor_original"))
+            grdDividas.TextMatrix(i, 2) = FormataValor(objDivida("valor_original"), False)
             grdDividas.TextMatrix(i, 3) = FormatDateTime(objDivida("data_vencimento"), vbShortDate)
         Next i
         
