@@ -16,7 +16,7 @@ public class NegociacoesRepository : INegociacoesRepository
         await using var connection = new NpgsqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        var query = "SELECT id, id_divida, qtd_parcelas, taxa_juros, valor_total, data_negociacao FROM negociacoes WHERE id_divida = @id_divida";
+        var query = "SELECT id, id_divida, qtd_parcelas, taxa_juros, valor_total, data_negociacao FROM negociacoes WHERE id_divida = @id_divida ORDER BY data_negociacao DESC";
         
         await using var command = new NpgsqlCommand(query, connection);
         command.Parameters.AddWithValue("id_divida", id_divida);
@@ -36,6 +36,25 @@ public class NegociacoesRepository : INegociacoesRepository
         }
 
         return negociacoes;
+    }
+
+    public async Task<int> AddNegociacaoAsync(Negociacoes negociacao)
+    {
+        await using var connection = new NpgsqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        var query = @"INSERT INTO negociacoes (id_divida, qtd_parcelas, taxa_juros, valor_total, data_negociacao)
+                  VALUES (@id_divida, @qtd_parcelas, @taxa_juros, @valor_total, @data_negociacao)
+                  RETURNING id";
+
+        await using var command = new NpgsqlCommand(query, connection);
+        command.Parameters.AddWithValue("id_divida", negociacao.id_divida);
+        command.Parameters.AddWithValue("qtd_parcelas", negociacao.qtd_parcelas);
+        command.Parameters.AddWithValue("taxa_juros", negociacao.taxa_juros);
+        command.Parameters.AddWithValue("valor_total", negociacao.valor_total);
+        command.Parameters.AddWithValue("data_negociacao", negociacao.data_negociacao);
+
+        return (int)await command.ExecuteScalarAsync();
     }
 }
 

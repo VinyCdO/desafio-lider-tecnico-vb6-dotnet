@@ -35,4 +35,22 @@ public class NegociacoesController : ControllerBase
             return StatusCode(500, "Erro interno do servidor.");
         }
     }
+
+    [HttpPost]
+    public async Task<ActionResult<int>> Post([FromBody] NegociacaoCreateDto negociacaoDto)
+    {
+        try
+        {
+            var id = await _negociacoesService.CriarNegociacaoAsync(negociacaoDto);
+            return CreatedAtAction(nameof(Get), new { id_divida = negociacaoDto.IdDivida }, id);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Erro interno do servidor.");
+        }
+    }
 }
