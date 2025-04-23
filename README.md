@@ -38,14 +38,14 @@ Este projeto foi desenvolvido utilizando as seguintes tecnologias:
 - **Componentes ActiveX (OCX)**: Componentes reutilizáveis que podem ser incorporados na interface gráfica do Visual Basic 6 para funcionalidades específicas.
   - *Nota:* A documentação específica de componentes ActiveX pode variar dependendo do fornecedor do componente. Geralmente, a documentação é fornecida com o próprio componente ou no site do desenvolvedor.
 - **PostgreSQL**: Um sistema de gerenciamento de banco de dados relacional (SGBDR) poderoso e de código aberto, utilizado para armazenar e gerenciar os dados da aplicação. Com conexão a partir do VB6 por drivers ODBC, e utilizada no projeto da API também para gravação e consulta de dados.
-  - [Documentação do PostgreSQL](https://www.postgresql.org/docs/)
+  - [Documentação do PostgreSQL](https://www.postgresql.org/docs)
 
 ## Pré-requisitos
 
 - [Visual Basic 6.0](https://winworldpc.com/product/microsoft-visual-bas/60) - Para desenvolvimento da aplicação VB6 (Recomenda-se também pela comunidade a instalação do Service Pack 6, é possível encontrar na web para download vários links, porém recomendo utilizar o setup do site oficial da [Microsoft](https://www.microsoft.com/en-in/download/details.aspx?id=7030)
 - [Visual Studio](https://visualstudio.microsoft.com/pt-br/) / [Visual Code](https://code.visualstudio.com/download) - Para desenvolvimento da API (utilizado Visual Studio neste projeto, mas pode ser usado Visual Code se preferível)
 - [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) - Para administração/desenvolvimento da base de dados (utilizado pgAdmin 4 para implementações deste projeto)
-- [psqlodbc-setup](https://www.postgresql.org/ftp/odbc/releases/ - Para permitir a conexão do seu projeeto VB6 com sua base de dados PostgreSQL
+- [psqlodbc-setup](https://www.postgresql.org/ftp/odbc/releases) - Para permitir a conexão do seu projeeto VB6 com sua base de dados PostgreSQL
 - [MSHFlexgrid](https://www.ocxdump.com/download-ocx-files_new.php/ocxfiles/M/MSHFLXGD.OCX/6.00.30050/download.html#google_vignette) - Para utilização de recursos de grids no VB6 (instrução de instalação e configuração no link de download)
 
 ## Instalação
